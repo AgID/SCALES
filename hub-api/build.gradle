@@ -1,0 +1,96 @@
+buildscript {
+    Properties constants = new Properties()
+
+    file("$projectDir/./constants.properties").withInputStream { constants.load(it) }
+
+    ext {
+        corda_version = constants.getProperty("cordaVersion")
+        corda_gradle_plugins_version = constants.getProperty("gradlePluginsVersion")
+        junit_version = constants.getProperty("junitVersion")
+        log4j_version = constants.getProperty("log4jVersion")
+        slf4j_version = constants.getProperty("slf4jVersion")
+        spring_boot_version = constants.getProperty("springBootVersion")
+        spring_boot_gradle_plugin_version = constants.getProperty("springBootGradlePluginsVersion")
+        keycloak_version = constants.getProperty("keycloakVersion")
+        keycloak_admin_version = constants.getProperty("keycloakAdminVersion")
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+        maven { url 'https://ci-artifactory.corda.r3cev.com/artifactory/corda-releases' }
+    }
+
+    dependencies {
+        classpath "net.corda.plugins:cordapp:$corda_gradle_plugins_version"
+        classpath "net.corda.plugins:cordformation:$corda_gradle_plugins_version"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_gradle_plugin_version"
+    }
+}
+
+apply from: "${rootProject.projectDir}/repositories.gradle"
+apply plugin: 'java'
+
+apply plugin: 'net.corda.plugins.cordapp'
+apply plugin: 'net.corda.plugins.cordformation'
+apply plugin: 'org.springframework.boot'
+
+sourceSets {
+    main {
+        resources {
+            srcDir rootProject.file("config/dev")
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-parameters" // Required by Corda's serialisation framework.
+}
+
+jar {
+    // This makes the JAR's SHA-256 hash repeatable.
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+dependencies {
+    testCompile "junit:junit:$junit_version"
+
+    // Corda dependencies.
+    cordaCompile "net.corda:corda-core:$corda_version"
+    cordaCompile "net.corda:corda-node-api:$corda_version"
+    cordaCompile "net.corda:corda-rpc:$corda_version"
+    cordaRuntime "net.corda:corda:$corda_version"
+
+    // Spring Boot
+    compile("org.springframework.boot:spring-boot-starter-web:$spring_boot_version") {
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+    }
+
+    // Keycloak
+    compile("org.keycloak:keycloak-spring-boot-starter:$keycloak_version") {
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+    }
+    compile "org.keycloak:keycloak-admin-client:$keycloak_admin_version"
+
+    // For logging
+    cordaCompile "org.apache.logging.log4j:log4j-slf4j-impl:$log4j_version"
+    cordaCompile "org.apache.logging.log4j:log4j-web:$log4j_version"
+    cordaCompile "org.slf4j:jul-to-slf4j:$slf4j_version"
+
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+task runServerA(type: JavaExec, dependsOn: assemble) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'net.scales.hub.server.Server'
+    args '--server.port=10055', '--node.rpc.host=localhost', '--node.rpc.port=10006', '--node.rpc.username=admin', '--node.rpc.password=123', '--sftp.dir=.sftp/node001/hub001', '--hub.id=hub001', '--vas.url=http://localhost:10066'
+}
+
+task runServerB(type: JavaExec, dependsOn: assemble) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'net.scales.hub.server.Server'
+    args '--server.port=10056', '--node.rpc.host=localhost', '--node.rpc.port=10009', '--node.rpc.username=admin', '--node.rpc.password=123', '--sftp.dir=.sftp/node002/hub002', '--hub.id=hub002', '--vas.url=http://localhost:10067'
+}

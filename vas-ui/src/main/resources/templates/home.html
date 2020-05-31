@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>VAS UI</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <style>
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <p><a href="/logout" style="color: red;">LOGOUT</a></p>
+
+    <table style="table-layout: fixed; width: 100%; border: 1; margin-top: 20px; margin-bottom: 50px;">
+        <tr>
+            <td style="width: 15%">USER-ID</td>
+            <td><span th:text="${id}" /></td>
+        </tr>
+        <tr>
+            <td style="width: 15%; vertical-align: top;">ACCESS-TOKEN</td>
+            <td id="token" style="word-wrap: break-word"><span th:text="${token}" /></td>
+        </tr>
+    </table>
+
+    <p><b>NOTIFICATIONS</b></p>
+    <table style="table-layout: fixed; width: 100%; border: 1; margin-top: 10px; margin-bottom: 50px;" id="invoices">
+        <tr>
+            <td>BASE URL</td>
+            <td>END ENTITY VAT ID</td>
+            <td>INVOICE NUMBER</td>
+            <td></td>
+        </tr>
+    </table>
+
+    <p><b>DETAIL</b></p>
+    <table style="table-layout: fixed; width: 100%; border: 1; margin-top: 10px;" id="detail">
+    </table>
+
+    <script>
+        function initialize() {
+            const eventSource = new EventSource('http://localhost:10088/notification');
+
+            eventSource.onmessage = e => {
+                let arr = e.data.split(',', 3);
+
+                $('#invoices').append(`<tr><td>${arr[0]}</td><td>${arr[1]}</td><td>${arr[2]}</td><td><button onclick="getInvoiceDetail('${arr[0]}', '${arr[2]}')">DETAIL</button></td></tr>`);
+            };
+
+            eventSource.onopen = e => console.log('open');
+
+            eventSource.onerror = e => {
+                if (e.readyState == EventSource.CLOSED) {
+                    console.log('close');
+                } else {
+                    console.log(e);
+                }
+            };
+
+            eventSource.addEventListener('second', function (e) {
+                console.log('second', e.data);
+            }, false);
+        }
+
+        function getInvoiceDetail(url, id) {
+            $('#detail').html('');
+
+            $.ajax({
+                type: "GET",
+                url: `${url}/api/invoice/${id}`,
+                headers: {
+                    "Authorization": "Bearer " + $('#token').text()
+                },
+                success: function (data) {
+                    if (data.status !== 'success') {
+                        alert(data);
+                        return;
+                    }
+
+                    for (let [key, value] of Object.entries(data.result)) {
+                        $('#detail').append(`<tr><td>${key.toUpperCase()}</td><td>${value}</td></tr>`);
+                    }
+                }
+            });
+        }
+
+        window.onload = initialize;
+    </script>
+</body>
+
+</html>

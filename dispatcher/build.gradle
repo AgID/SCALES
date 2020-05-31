@@ -1,0 +1,69 @@
+buildscript {
+    Properties constants = new Properties()
+
+    file("$projectDir/./constants.properties").withInputStream { constants.load(it) }
+
+    ext {
+        junit_version = constants.getProperty("junitVersion")
+        log4j_version = constants.getProperty("log4jVersion")
+        slf4j_version = constants.getProperty("slf4jVersion")
+        spring_boot_version = constants.getProperty("springBootVersion")
+        spring_boot_gradle_plugin_version = constants.getProperty("springBootGradlePluginsVersion")
+        http_client_version = constants.getProperty("httpClientVersion")
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_gradle_plugin_version"
+    }
+}
+
+apply from: "${rootProject.projectDir}/repositories.gradle"
+apply plugin: 'java'
+
+apply plugin: 'org.springframework.boot'
+
+sourceSets {
+    main {
+        resources {
+            srcDir rootProject.file("config/dev")
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-parameters" // Required by Corda's serialisation framework.
+}
+
+jar {
+    // This makes the JAR's SHA-256 hash repeatable.
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+dependencies {
+    testCompile "junit:junit:$junit_version"
+
+    // Spring Boot
+    compile("org.springframework.boot:spring-boot-starter-web:$spring_boot_version") {
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+    }
+
+    compile "org.apache.httpcomponents:httpclient:$http_client_version"
+
+    // For logging
+    compile "org.apache.logging.log4j:log4j-slf4j-impl:$log4j_version"
+    compile "org.apache.logging.log4j:log4j-web:$log4j_version"
+    compile "org.slf4j:jul-to-slf4j:$slf4j_version"
+}
+
+task runServer(type: JavaExec, dependsOn: assemble) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'net.scales.dispatcher.server.Server'
+}
