@@ -64,7 +64,7 @@ public class HomeController implements ErrorController {
 	}
 
 	@EventListener
-	public void onNewInvoice(String data) {
+	public void onNewEvent(String data) {
 		List<SseEmitter> deadEmitters = new ArrayList<>();
 
 		this.emitters.forEach(emitter -> {

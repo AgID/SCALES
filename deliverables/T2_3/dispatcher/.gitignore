@@ -78,3 +78,5 @@ docs/virtualenv/
 lib
 
 bin
+database.mv.db
+database.trace.db

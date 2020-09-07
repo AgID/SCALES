@@ -3,25 +3,19 @@ package net.scales.vas.models;
 public class Hub {
 
     private final String hubId;
-    private final String hubVat;
-    private final String hubName;
+    private final String hubAccount;
 
-    public Hub(String hubId, String hubVat, String hubName) {
+    public Hub(String hubId, String hubAccount) {
         this.hubId = hubId;
-        this.hubVat = hubVat;
-        this.hubName = hubName;
+        this.hubAccount = hubAccount;
     }
 
     public String getHubId() {
         return hubId;
     }
 
-    public String getHubVat() {
-        return hubVat;
-    }
-
-    public String getHubName() {
-        return hubName;
+    public String getHubAccount() {
+        return hubAccount;
     }
 
 }

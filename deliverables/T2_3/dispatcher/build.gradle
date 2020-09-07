@@ -10,6 +10,9 @@ buildscript {
         spring_boot_version = constants.getProperty("springBootVersion")
         spring_boot_gradle_plugin_version = constants.getProperty("springBootGradlePluginsVersion")
         http_client_version = constants.getProperty("httpClientVersion")
+        h2_database_version = constants.getProperty("h2DatabaseVersion")
+        spring_boot_jpa_version = constants.getProperty("springBootJPAVersion")
+        javax_persistence_version = constants.getProperty("javaxPersistenceVersion")
     }
 
     repositories {
@@ -54,6 +57,9 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web:$spring_boot_version") {
         exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
     }
+    compile("org.springframework.boot:spring-boot-starter-data-jpa:$spring_boot_jpa_version") {
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+    }
 
     compile "org.apache.httpcomponents:httpclient:$http_client_version"
 
@@ -61,9 +67,16 @@ dependencies {
     compile "org.apache.logging.log4j:log4j-slf4j-impl:$log4j_version"
     compile "org.apache.logging.log4j:log4j-web:$log4j_version"
     compile "org.slf4j:jul-to-slf4j:$slf4j_version"
+
+    compile "com.h2database:h2:$h2_database_version"
+
+    compile "javax.persistence:javax.persistence-api:$javax_persistence_version"
+
+    compile "org.apache.commons:commons-lang3:3.0"
+    compile "com.fasterxml.jackson.core:jackson-databind:2.10.0.pr2"
 }
 
 task runServer(type: JavaExec, dependsOn: assemble) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'net.scales.dispatcher.server.Server'
+    main = 'net.scales.dispatcher.Server'
 }

@@ -13,10 +13,10 @@ import net.scales.flows.utils.FileUtils;
 @StartableByRPC
 public class GetInvoiceFileByIdFlow extends FlowLogic<String> {
 
-    private final String invoiceNumber;
+    private final String id;
 
-    public GetInvoiceFileByIdFlow(String invoiceNumber) {
-        this.invoiceNumber = invoiceNumber;
+    public GetInvoiceFileByIdFlow(String id) {
+        this.id = id;
     }
 
     @Override
@@ -25,13 +25,13 @@ public class GetInvoiceFileByIdFlow extends FlowLogic<String> {
         try {
             InvoiceDatabaseService db = getServiceHub().cordaService(InvoiceDatabaseService.class);
 
-            Blob data = db.getInvoiceFileById(invoiceNumber);
+            Blob data = db.getInvoiceFileById(id);
 
-            if (data == null) {
-                return "";
+            if (data != null) {
+                return FileUtils.convertToString(data.getBinaryStream());
             }
 
-            return FileUtils.convertToString(data.getBinaryStream());
+            return null;
 
         } catch (Exception ex) {
             throw new FlowException(ex.getMessage());

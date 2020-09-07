@@ -5,7 +5,7 @@ import net.scales.states.InvoiceState;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.google.common.collect.ImmutableList;
+
 import com.r3.corda.lib.tokens.workflows.flows.evolvable.UpdateEvolvableTokenFlow;
 import com.r3.corda.lib.tokens.workflows.flows.evolvable.UpdateEvolvableTokenFlowHandler;
 
@@ -16,101 +16,106 @@ import net.corda.core.flows.FlowSession;
 import net.corda.core.flows.InitiatedBy;
 import net.corda.core.flows.InitiatingFlow;
 import net.corda.core.flows.StartableByRPC;
-import net.corda.core.node.ServiceHub;
+import net.corda.core.identity.Party;
 import net.corda.core.transactions.SignedTransaction;
 
-@StartableByRPC
 public class UpdatePaymentInfoFlow {
 
     @InitiatingFlow
     @StartableByRPC
     public static class Initiator extends FlowLogic<String> {
 
-        private final String invoiceNumber;
+        private final String invoiceId;
         private final String vasId;
         private final String paidAmountToDate;
         private final String lastPaymentDate;
         private final String amountDueForPayment;
+        private final String lastUpdate;
+        private final String paid;
 
-        public Initiator(String invoiceNumber, String vasId, String paidAmountToDate, String lastPaymentDate, String amountDueForPayment) {
-            this.invoiceNumber = invoiceNumber;
+        public Initiator(String invoiceId, String vasId, String paidAmountToDate, String lastPaymentDate, String amountDueForPayment, String lastUpdate, String paid) {
+            this.invoiceId = invoiceId;
             this.vasId = vasId;
             this.paidAmountToDate = paidAmountToDate;
             this.lastPaymentDate = lastPaymentDate;
             this.amountDueForPayment = amountDueForPayment;
+            this.lastUpdate = lastUpdate;
+            this.paid = paid;
         }
 
         @Override
         @Suspendable
         public String call() throws FlowException {
             try {
-                // Get node's service hub
-                ServiceHub serviceHub = getServiceHub();
-
                 StateAndRef<InvoiceState> state = null;
 
                 try {
-                    // Get the unconsumed InvoiceState from the vault
-                    List<StateAndRef<InvoiceState>> states = serviceHub.getVaultService().queryBy(InvoiceState.class).getStates();
+                    // Gets the unconsumed InvoiceState from the vault
+                    List<StateAndRef<InvoiceState>> states = getServiceHub().getVaultService().queryBy(InvoiceState.class).getStates();
 
-                    // Filter state by invoice number
-                    state = states.stream().filter(sf->sf.getState().getData().getInvoiceNumber().equals(invoiceNumber)).findAny().get();
+                    // Filters state by id
+                    state = states.stream().filter(sf->sf.getState().getData().getLinearId().toString().equals(invoiceId)).findAny().get();
 
-                } catch(Exception ex) {}
-
-                if (state == null) {
-                    return "";
+                } catch(Exception ex) {
+                    return null;
                 }
     
-                // Get current state
-                InvoiceState oldInvoiceState = state.getState().getData();
+                // Gets current state
+                InvoiceState currentState = state.getState().getData();
     
-                // Create new state
-                InvoiceState newInvoiceState = new InvoiceState(
-                    oldInvoiceState.getLinearId(),
-                    oldInvoiceState.getMaintainers(),
-                    oldInvoiceState.getIssuer(),
-                    oldInvoiceState.getCompetentAuthorityId(),
-                    oldInvoiceState.getCurrentState(),
-                    oldInvoiceState.getFileName(),
-                    oldInvoiceState.getMessageId(),
-                    oldInvoiceState.getDateTimeReceipt(),
-                    oldInvoiceState.getDateTimeDelivery(),
-                    oldInvoiceState.getNotificationNotes(),
-                    oldInvoiceState.getNotificationSignature(),
-                    oldInvoiceState.getInvoiceHash(),
-                    oldInvoiceState.getInvoiceOwner(),
-                    oldInvoiceState.getInvoiceSignature(),
-                    oldInvoiceState.getApprovedSubject(),
-                    oldInvoiceState.getInvoiceFormat(),
-                    oldInvoiceState.getInvoiceNumber(),
-                    oldInvoiceState.getInvoiceIssueDate(),
-                    oldInvoiceState.getInvoiceTypeCode(),
-                    oldInvoiceState.getInvoiceCurrencyCode(),
-                    oldInvoiceState.getProjectReference(),
-                    oldInvoiceState.getPurchaseOrderReference(),
-                    oldInvoiceState.getTenderOrLotReference(),
-                    oldInvoiceState.getSellerVatId(),
-                    oldInvoiceState.getSellerTaxRegistrationId(),
-                    oldInvoiceState.getBuyerVatId(),
-                    oldInvoiceState.getBuyerTaxRegistrationId(),
-                    oldInvoiceState.getBuyerTaxRegistrationIdSchemeId(),
-                    oldInvoiceState.getBuyerElectronicAddress(),
-                    oldInvoiceState.getBuyerElectronicAddressSchemeId(),
-                    oldInvoiceState.getPaymentDueDate(),
-                    oldInvoiceState.getInvoiceTotalAmountWithVat(),
+                // Creates new state
+                InvoiceState newState = new InvoiceState(
+                    currentState.getLinearId(),
+                    currentState.getMaintainers(),
+                    currentState.getIssuer(),
+                    currentState.getCompetentAuthorityId(),
+                    currentState.getCurrentState(),
+                    currentState.getFileName(),
+                    currentState.getMessageId(),
+                    currentState.getDateTimeReceipt(),
+                    currentState.getDateTimeDelivery(),
+                    currentState.getNotificationNotes(),
+                    currentState.getNotificationSignature(),
+                    currentState.getInvoiceHash(),
+                    currentState.getInvoiceOwner(),
+                    currentState.getInvoiceSignature(),
+                    currentState.getApprovedSubject(),
+                    currentState.getInvoiceFormat(),
+                    currentState.getInvoiceNumber(),
+                    currentState.getInvoiceIssueDate(),
+                    currentState.getInvoiceTypeCode(),
+                    currentState.getInvoiceCurrencyCode(),
+                    currentState.getProjectReference(),
+                    currentState.getPurchaseOrderReference(),
+                    currentState.getTenderOrLotReference(),
+                    currentState.getSellerVatId(),
+                    currentState.getSellerTaxRegistrationId(),
+                    currentState.getBuyerVatId(),
+                    currentState.getBuyerTaxRegistrationId(),
+                    currentState.getBuyerTaxRegistrationIdSchemeId(),
+                    currentState.getBuyerElectronicAddress(),
+                    currentState.getBuyerElectronicAddressSchemeId(),
+                    currentState.getPaymentDueDate(),
+                    currentState.getInvoiceTotalAmountWithVat(),
                     amountDueForPayment,
                     vasId,
                     paidAmountToDate,
                     lastPaymentDate,
-                    oldInvoiceState.getType(),
-                    oldInvoiceState.getHubId(),
-                    oldInvoiceState.getEndEntityId(),
+                    lastUpdate,
+                    paid,
+                    currentState.getHubId(),
+                    currentState.getEndEntityId(),
                     System.currentTimeMillis() / 1000
                 );
 
-                // Update invoice state by calling UpdateEvolvableToken flow
-                SignedTransaction stx = subFlow(new UpdateEvolvableTokenFlow(state, newInvoiceState, ImmutableList.of(), new ArrayList<>()));
+                List<FlowSession> sessions = new ArrayList<>();
+
+                for (Party party : currentState.getMaintainers()) {
+                    sessions.add(initiateFlow(party));
+                }
+
+                // Updates invoice state by calling UpdateEvolvableToken flow
+                SignedTransaction stx = subFlow(new UpdateEvolvableTokenFlow(state, newState, sessions, new ArrayList<>()));
 
                 return stx.getId().toString();
     
@@ -118,6 +123,7 @@ public class UpdatePaymentInfoFlow {
                 throw new FlowException(ex.getMessage());
             }
         }
+
     }
 
     @InitiatedBy(UpdatePaymentInfoFlow.Initiator.class)

@@ -6,9 +6,9 @@ cordapp {
     targetPlatformVersion corda_platform_version
     minimumPlatformVersion corda_platform_version
     workflow {
-        name "Scales WorkFlows"
+        name "Scales Workflows"
         vendor "SCALES"
-        licence "Apache License, Version 2.0"
+        licence "Apache 2"
         versionId 1
     }
 }
@@ -49,21 +49,22 @@ configurations {
 dependencies {
     testCompile "junit:junit:$junit_version"
 
-    // Corda dependencies.
+    // Corda dependencies
     cordaCompile "net.corda:corda-core:$corda_core_release_version"
     cordaRuntime "net.corda:corda:$corda_release_version"
 
     testCompile "net.corda:corda-node-driver:$corda_release_version"
 
-    // CorDapp dependencies.
+    // CorDapp dependencies
     cordapp project(":contracts")
 
-    // Token SDK dependencies.
+    // Token SDK dependencies
     cordaCompile "com.r3.corda.lib.tokens:tokens-money:$tokens_release_version"
     cordaCompile "com.r3.corda.lib.tokens:tokens-workflows:$tokens_release_version"
 
     compile "net.sf.saxon:Saxon-HE:$saxon_version"
     compile "commons-io:commons-io:$commons_io_version"
+    compile "com.squareup.okhttp3:okhttp:$okhttp_version"
 }
 
 task integrationTest(type: Test, dependsOn: []) {

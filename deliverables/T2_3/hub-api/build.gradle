@@ -5,7 +5,7 @@ buildscript {
 
     ext {
         corda_version = constants.getProperty("cordaVersion")
-        corda_gradle_plugins_version = constants.getProperty("gradlePluginsVersion")
+        corda_gradle_plugins_version = constants.getProperty("cordaGradlePluginsVersion")
         junit_version = constants.getProperty("junitVersion")
         log4j_version = constants.getProperty("log4jVersion")
         slf4j_version = constants.getProperty("slf4jVersion")
@@ -13,6 +13,7 @@ buildscript {
         spring_boot_gradle_plugin_version = constants.getProperty("springBootGradlePluginsVersion")
         keycloak_version = constants.getProperty("keycloakVersion")
         keycloak_admin_version = constants.getProperty("keycloakAdminVersion")
+        org_json_version = constants.getProperty("orgJsonVersion")
     }
 
     repositories {
@@ -74,6 +75,8 @@ dependencies {
         exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
     }
     compile "org.keycloak:keycloak-admin-client:$keycloak_admin_version"
+
+    compile "org.json:json:$org_json_version"
 
     // For logging
     cordaCompile "org.apache.logging.log4j:log4j-slf4j-impl:$log4j_version"

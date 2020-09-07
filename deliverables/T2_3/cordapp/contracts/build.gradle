@@ -7,7 +7,7 @@ cordapp {
     contract {
         name "Scales Contracts"
         vendor "SCALES"
-        licence "Apache License, Version 2.0"
+        licence "Apache 2"
         versionId 1
     }
 }
@@ -28,12 +28,12 @@ sourceSets {
 }
 
 dependencies {
-    // Corda dependencies.
+    // Corda dependencies
     cordaCompile "net.corda:corda-core:$corda_core_release_version"
     cordaRuntime "net.corda:corda:$corda_release_version"
 
     testCompile "net.corda:corda-node-driver:$corda_release_version"
 
-    // Token SDK dependencies.
+    // Token SDK dependencies
     cordaCompile "com.r3.corda.lib.tokens:tokens-contracts:$tokens_release_version"
 }

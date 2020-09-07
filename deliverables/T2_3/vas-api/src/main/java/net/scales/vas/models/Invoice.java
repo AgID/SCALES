@@ -2,7 +2,7 @@ package net.scales.vas.models;
 
 public class Invoice {
 
-    private final String type;
+    private final String id;
     private final String hubId;
     private final String endEntityId;
 
@@ -36,13 +36,16 @@ public class Invoice {
     private final String buyerElectronicAddressSchemeId;
     private final String paymentDueDate;
     private final String invoiceTotalAmountWithVat;
+
     private final String amountDueForPayment;
     private final String vasId;
     private final String paidAmountToDate;
     private final String lastPaymentDate;
+    private final String lastUpdate;
+    private final String paid;
 
     public Invoice(
-        String type,
+        String id,
         String hubId,
         String endEntityId,
         String competentAuthorityId,
@@ -77,9 +80,11 @@ public class Invoice {
         String amountDueForPayment,
         String vasId,
         String paidAmountToDate,
-        String lastPaymentDate
+        String lastPaymentDate,
+        String lastUpdate,
+        String paid
     ) {
-        this.type = type;
+        this.id = id;
         this.hubId = hubId;
         this.endEntityId = endEntityId;
 
@@ -113,10 +118,13 @@ public class Invoice {
         this.buyerElectronicAddressSchemeId = buyerElectronicAddressSchemeId;
         this.paymentDueDate = paymentDueDate;
         this.invoiceTotalAmountWithVat = invoiceTotalAmountWithVat;
+
         this.amountDueForPayment = amountDueForPayment;
         this.vasId = vasId;
         this.paidAmountToDate = paidAmountToDate;
         this.lastPaymentDate = lastPaymentDate;
+        this.lastUpdate = lastUpdate;
+        this.paid = paid;
     }
 
     public String getEndEntityId() {
@@ -127,8 +135,8 @@ public class Invoice {
         return hubId;
     }
 
-    public String getType() {
-        return type;
+    public String getId() {
+        return id;
     }
 
     public String getCompetentAuthorityId() {
@@ -261,6 +269,14 @@ public class Invoice {
 
     public String getLastPaymentDate() {
         return lastPaymentDate;
+    }
+
+    public String getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public String getPaid() {
+        return paid;
     }
 
 }

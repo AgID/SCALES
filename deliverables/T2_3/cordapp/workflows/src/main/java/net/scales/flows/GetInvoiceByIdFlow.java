@@ -10,10 +10,10 @@ import net.scales.flows.services.InvoiceDatabaseService;
 @StartableByRPC
 public class GetInvoiceByIdFlow extends FlowLogic<Object> {
 
-    private final String invoiceNumber;
+    private final String id;
 
-    public GetInvoiceByIdFlow(String invoiceNumber) {
-        this.invoiceNumber = invoiceNumber;
+    public GetInvoiceByIdFlow(String id) {
+        this.id = id;
     }
 
     @Override
@@ -22,7 +22,7 @@ public class GetInvoiceByIdFlow extends FlowLogic<Object> {
         try {
             InvoiceDatabaseService db = getServiceHub().cordaService(InvoiceDatabaseService.class);
 
-            return db.getInvoiceById(invoiceNumber);
+            return db.getInvoiceById(id);
 
         } catch (Exception ex) {
             throw new FlowException(ex.getMessage());

@@ -7,7 +7,6 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
-import org.keycloak.representations.AccessToken;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,13 +17,13 @@ public class BaseController {
 
 	protected final CordaRPCOps proxy;
 
-	private final KeycloakSecurityContext securityContext;
+	protected final KeycloakSecurityContext securityContext;
 
 	@Value("${keycloak.auth-server-url}")
-	private String authUrl;
+	protected String authUrl;
 
 	@Value("${keycloak.realm}")
-	private String realm;
+	protected String realm;
 
 	public BaseController(NodeRPCConnection rpc, KeycloakSecurityContext securityContext) {
 		this.proxy = rpc.proxy;
@@ -32,20 +31,13 @@ public class BaseController {
 	}
 
 	protected Keycloak getKeycloak() {
-        return KeycloakBuilder.builder()
+		return KeycloakBuilder
+					.builder()
 					.serverUrl(authUrl)
 					.realm(realm)
 					.authorization(securityContext.getTokenString())
 					.resteasyClient(new ResteasyClientBuilder().connectionPoolSize(20).build())
 					.build();
-	}
-
-	protected AccessToken getAccessToken() {
-        return securityContext.getToken();
-	}
-
-	protected String getRealm() {
-        return realm;
 	}
 
 }

@@ -39,9 +39,11 @@
     <p><b>NOTIFICATIONS</b></p>
     <table style="table-layout: fixed; width: 100%; border: 1; margin-top: 10px; margin-bottom: 50px;" id="invoices">
         <tr>
-            <td>BASE URL</td>
-            <td>END ENTITY VAT ID</td>
-            <td>INVOICE NUMBER</td>
+            <td>VAS URL</td>
+            <td>HUB ID</td>
+            <td>END ENTITY ID</td>
+            <td>TYPE</td>
+            <td>INVOICE ID | ORDER ID</td>
             <td></td>
         </tr>
     </table>
@@ -55,9 +57,9 @@
             const eventSource = new EventSource('http://localhost:10088/notification');
 
             eventSource.onmessage = e => {
-                let arr = e.data.split(',', 3);
+                let obj = JSON.parse(e.data);
 
-                $('#invoices').append(`<tr><td>${arr[0]}</td><td>${arr[1]}</td><td>${arr[2]}</td><td><button onclick="getInvoiceDetail('${arr[0]}', '${arr[2]}')">DETAIL</button></td></tr>`);
+                $('#invoices').append(`<tr><td>${obj.vasUrl}</td><td>${obj.hubId}</td><td>${obj.endEntityId}</td><td>${obj.type}</td><td>${obj.data}</td><td><button onclick="getDataDetail('${obj.vasUrl}', '${obj.type}', '${obj.data}')">DETAIL</button></td></tr>`);
             };
 
             eventSource.onopen = e => console.log('open');
@@ -75,12 +77,12 @@
             }, false);
         }
 
-        function getInvoiceDetail(url, id) {
+        function getDataDetail(url, type, id) {
             $('#detail').html('');
 
             $.ajax({
                 type: "GET",
-                url: `${url}/api/invoice/${id}`,
+                url: `${url}/api/${type}/${id}`,
                 headers: {
                     "Authorization": "Bearer " + $('#token').text()
                 },

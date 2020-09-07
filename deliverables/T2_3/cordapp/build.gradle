@@ -6,19 +6,23 @@ buildscript {
     ext {
         corda_release_version = constants.getProperty("cordaVersion")
         corda_core_release_version = constants.getProperty("cordaCoreVersion")
-        corda_gradle_plugins_version = constants.getProperty("gradlePluginsVersion")
+        corda_gradle_plugins_version = constants.getProperty("cordaGradlePluginsVersion")
         junit_version = constants.getProperty("junitVersion")
         log4j_version = constants.getProperty("log4jVersion")
         slf4j_version = constants.getProperty("slf4jVersion")
+        guava_version = constants.getProperty("guavaVersion")
+        quasar_version = constants.getProperty("quasarVersion")
         corda_platform_version = constants.getProperty("platformVersion").toInteger()
+        commons_io_version = constants.getProperty("commonsIOVersion")
+
+        // A simple HTTP library
+        okhttp_version = constants.getProperty("okHttpVersion")
 
         // Token
         tokens_release_version = constants.getProperty("tokenVersion")
 
         // XSLT processor
         saxon_version = constants.getProperty("saxonVersion")
-
-        commons_io_version = constants.getProperty("commonsIOVersion")
     }
 
     repositories {
@@ -49,11 +53,15 @@ allprojects {
     }
 
     tasks.withType(JavaCompile) {
-        options.compilerArgs << "-parameters" // Required by Corda's serialisation framework.
+        options.compilerArgs << "-parameters" // Required by Corda's serialisation framework
+    }
+
+    dependencies {
+        compile "com.google.guava:guava:$guava_version"
     }
 
     jar {
-        // This makes the JAR's SHA-256 hash repeatable.
+        // This makes the JAR's SHA-256 hash repeatable
         preserveFileTimestamps = false
         reproducibleFileOrder = true
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -65,20 +73,21 @@ apply plugin: 'net.corda.plugins.cordformation'
 apply plugin: 'net.corda.plugins.quasar-utils'
 
 dependencies {
-    // Corda dependencies.
+    // Corda dependencies
     cordaCompile "net.corda:corda-core:$corda_core_release_version"
     cordaCompile "net.corda:corda-node-api:$corda_release_version"
     cordaRuntime "net.corda:corda:$corda_release_version"
 
-    // CorDapp dependencies.
+    // CorDapp dependencies
     cordapp project(":workflows")
     cordapp project(":contracts")
 
+    // For logging
     cordaCompile "org.apache.logging.log4j:log4j-slf4j-impl:${log4j_version}"
     cordaCompile "org.apache.logging.log4j:log4j-web:${log4j_version}"
     cordaCompile "org.slf4j:jul-to-slf4j:$slf4j_version"
 
-    // Token SDK dependencies.
+    // Token SDK dependencies
     cordapp "com.r3.corda.lib.tokens:tokens-contracts:$tokens_release_version"
     cordapp "com.r3.corda.lib.tokens:tokens-workflows:$tokens_release_version"
     cordapp "com.r3.corda.lib.tokens:tokens-money:$tokens_release_version"
@@ -86,10 +95,18 @@ dependencies {
 
 cordapp {
     info {
-        name "Scales CorDapp"
+        name "CorDapp"
         vendor "SCALES"
         targetPlatformVersion corda_platform_version
         minimumPlatformVersion corda_platform_version
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir rootProject.file("config/dev")
+        }
     }
 }
 
@@ -114,7 +131,7 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         }
     }
     node {
-        name "O=PartyA,L=London,C=GB"
+        name "O=PartyA,L=San Francisco,C=US"
         p2pPort 10005
         rpcSettings {
             address("localhost:10006")
@@ -135,6 +152,18 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         rpcUsers = [[ user: "admin", "password": "123", "permissions": ["ALL"]]]
         extraConfig = [
             h2Settings: [ address: "localhost:10091" ]
+        ]
+    }
+    node {
+        name "O=SDI,L=Sydney,C=AU"
+        p2pPort 10011
+        rpcSettings {
+            address("localhost:10012")
+            adminAddress("localhost:10052")
+        }
+        rpcUsers = [[ user: "admin", "password": "123", "permissions": ["ALL"]]]
+        extraConfig = [
+            h2Settings: [ address: "localhost:10092" ]
         ]
     }
 }

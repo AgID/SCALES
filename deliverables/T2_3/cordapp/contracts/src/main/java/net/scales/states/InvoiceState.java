@@ -26,7 +26,8 @@ public class InvoiceState extends EvolvableTokenType implements QueryableState {
     private final Party issuer;
     private final int fractionDigits = 0;
 
-    // Properties of Invoice. Some of these values may evolve over time.
+    // Properties of Invoice
+    // Some of these values may evolve over time
     private final String competentAuthorityId;
     private final String currentState;
     private final String fileName;
@@ -56,12 +57,14 @@ public class InvoiceState extends EvolvableTokenType implements QueryableState {
     private final String buyerElectronicAddressSchemeId;
     private final String paymentDueDate;
     private final String invoiceTotalAmountWithVat;
+
     private final String amountDueForPayment;
     private final String vasId;
     private final String paidAmountToDate;
     private final String lastPaymentDate;
+    private final String lastUpdate;
+    private final String paid;
 
-    private final String type;
     private final String hubId;
     private final String endEntityId;
     private final long time;
@@ -103,7 +106,8 @@ public class InvoiceState extends EvolvableTokenType implements QueryableState {
         String vasId,
         String paidAmountToDate,
         String lastPaymentDate,
-        String type,
+        String lastUpdate,
+        String paid,
         String hubId,
         String endEntityId,
         long time
@@ -141,12 +145,14 @@ public class InvoiceState extends EvolvableTokenType implements QueryableState {
         this.buyerElectronicAddressSchemeId = buyerElectronicAddressSchemeId;
         this.paymentDueDate = paymentDueDate;
         this.invoiceTotalAmountWithVat = invoiceTotalAmountWithVat;
+
         this.amountDueForPayment = amountDueForPayment;
         this.vasId = vasId;
         this.paidAmountToDate = paidAmountToDate;
         this.lastPaymentDate = lastPaymentDate;
+        this.lastUpdate = lastUpdate;
+        this.paid = paid;
 
-        this.type = type;
         this.hubId = hubId;
         this.endEntityId = endEntityId;
         this.time = time;
@@ -156,47 +162,49 @@ public class InvoiceState extends EvolvableTokenType implements QueryableState {
     public PersistentState generateMappedObject(MappedSchema schema) {
         if (schema instanceof InvoiceSchemaV1) {
             return new InvoiceSchemaV1.PersistentInvoice(
-                this.competentAuthorityId,
-                this.currentState,
-                this.fileName,
-                this.messageId,
-                this.dateTimeReceipt,
-                this.dateTimeDelivery,
-                this.notificationNotes,
-                this.notificationSignature,
-                this.invoiceHash,
-                this.invoiceOwner,
-                this.invoiceSignature,
-                this.approvedSubject,
-                this.invoiceFormat,
-                this.invoiceNumber,
-                this.invoiceIssueDate,
-                this.invoiceTypeCode,
-                this.invoiceCurrencyCode,
-                this.projectReference,
-                this.purchaseOrderReference,
-                this.tenderOrLotReference,
-                this.sellerVatId,
-                this.sellerTaxRegistrationId,
-                this.buyerVatId,
-                this.buyerTaxRegistrationId,
-                this.buyerTaxRegistrationIdSchemeId,
-                this.buyerElectronicAddress,
-                this.buyerElectronicAddressSchemeId,
-                this.paymentDueDate,
-                this.invoiceTotalAmountWithVat,
-                this.amountDueForPayment,
-                this.vasId,
-                this.paidAmountToDate,
-                this.lastPaymentDate,
-                this.type,
-                this.hubId,
-                this.endEntityId,
-                this.time
+                competentAuthorityId,
+                currentState,
+                fileName,
+                messageId,
+                dateTimeReceipt,
+                dateTimeDelivery,
+                notificationNotes,
+                notificationSignature,
+                invoiceHash,
+                invoiceOwner,
+                invoiceSignature,
+                approvedSubject,
+                invoiceFormat,
+                invoiceNumber,
+                invoiceIssueDate,
+                invoiceTypeCode,
+                invoiceCurrencyCode,
+                projectReference,
+                purchaseOrderReference,
+                tenderOrLotReference,
+                sellerVatId,
+                sellerTaxRegistrationId,
+                buyerVatId,
+                buyerTaxRegistrationId,
+                buyerTaxRegistrationIdSchemeId,
+                buyerElectronicAddress,
+                buyerElectronicAddressSchemeId,
+                paymentDueDate,
+                invoiceTotalAmountWithVat,
+                amountDueForPayment,
+                vasId,
+                paidAmountToDate,
+                lastPaymentDate,
+                lastUpdate,
+                paid,
+                linearId.toString(),
+                hubId,
+                endEntityId,
+                time
             );
         }
 
-        throw new IllegalArgumentException("Unrecognised schema $schema");
+        throw new IllegalArgumentException("Unrecognized schema $schema");
     }
 
     @Override
@@ -222,8 +230,7 @@ public class InvoiceState extends EvolvableTokenType implements QueryableState {
     }
 
     public TokenPointer<InvoiceState> toPointer() {
-        final LinearPointer<InvoiceState> linearPointer = new LinearPointer<>(linearId, InvoiceState.class);
-        return new TokenPointer<>(linearPointer, fractionDigits);
+        return new TokenPointer<>(new LinearPointer<>(linearId, InvoiceState.class), fractionDigits);
     }
 
     public Party getIssuer() {
@@ -240,10 +247,6 @@ public class InvoiceState extends EvolvableTokenType implements QueryableState {
 
     public String getHubId() {
         return hubId;
-    }
-
-    public String getType() {
-        return type;
     }
 
     public String getInvoiceHash() {
@@ -376,6 +379,14 @@ public class InvoiceState extends EvolvableTokenType implements QueryableState {
 
     public String getLastPaymentDate() {
         return lastPaymentDate;
+    }
+
+    public String getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public String getPaid() {
+        return paid;
     }
 
 }

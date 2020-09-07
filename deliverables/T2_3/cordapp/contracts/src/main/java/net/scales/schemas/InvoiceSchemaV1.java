@@ -1,6 +1,7 @@
 package net.scales.schemas;
 
 import com.google.common.collect.ImmutableList;
+
 import net.corda.core.schemas.MappedSchema;
 import net.corda.core.schemas.PersistentState;
 
@@ -9,7 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * An InvoiceState schema.
+ * An InvoiceState schema
  */
 public class InvoiceSchemaV1 extends MappedSchema {
 
@@ -21,7 +22,7 @@ public class InvoiceSchemaV1 extends MappedSchema {
     @Table(name = "INVOICE_STATES")
     public static class PersistentInvoice extends PersistentState {
 
-        @Column(name = "TYPE") private final String type;
+        @Column(name = "ID") private final String id;
         @Column(name = "HUB_ID") private final String hubId;
         @Column(name = "END_ENTITY_ID") private final String endEntityId;
         @Column(name = "TIME") private final long time;
@@ -55,10 +56,13 @@ public class InvoiceSchemaV1 extends MappedSchema {
         @Column(name = "BUYER_ELECTRONIC_ADDRESS_SCHEME_ID") private final String buyerElectronicAddressSchemeId;
         @Column(name = "PAYMENT_DUE_DATE") private final String paymentDueDate;
         @Column(name = "INVOICE_TOTAL_AMOUNT_WITH_VAT") private final String invoiceTotalAmountWithVat;
+
         @Column(name = "AMOUNT_DUE_FOR_PAYMENT") private final String amountDueForPayment;
         @Column(name = "VAS_ID") private final String vasId;
         @Column(name = "PAID_AMOUNT_TO_DATE") private final String paidAmountToDate;
         @Column(name = "LAST_PAYMENT_DATE") private final String lastPaymentDate;
+        @Column(name = "LAST_UPDATE") private final String lastUpdate;
+        @Column(name = "PAID") private final String paid;
 
         public PersistentInvoice(
             String competentAuthorityId,
@@ -94,7 +98,9 @@ public class InvoiceSchemaV1 extends MappedSchema {
             String vasId,
             String paidAmountToDate,
             String lastPaymentDate,
-            String type,
+            String lastUpdate,
+            String paid,
+            String id,
             String hubId,
             String endEntityId,
             long time
@@ -128,59 +134,69 @@ public class InvoiceSchemaV1 extends MappedSchema {
             this.buyerElectronicAddressSchemeId = buyerElectronicAddressSchemeId;
             this.paymentDueDate = paymentDueDate;
             this.invoiceTotalAmountWithVat = invoiceTotalAmountWithVat;
+
             this.amountDueForPayment = amountDueForPayment;
             this.vasId = vasId;
             this.paidAmountToDate = paidAmountToDate;
             this.lastPaymentDate = lastPaymentDate;
+            this.lastUpdate = lastUpdate;
+            this.paid = paid;
 
-            this.type = type;
+            this.id = id;
             this.hubId = hubId;
             this.endEntityId = endEntityId;
             this.time = time;
         }
 
         /**
-         * Default constructor required by hibernate.
+         * Default constructor required by hibernate
          */
         public PersistentInvoice() {
-            this.competentAuthorityId = null;
-            this.currentState = null;
-            this.fileName = null;
-            this.messageId = null;
-            this.dateTimeReceipt = null;
-            this.dateTimeDelivery = null;
-            this.notificationNotes = null;
-            this.notificationSignature = null;
-            this.invoiceHash = null;
-            this.invoiceOwner = null;
-            this.invoiceSignature = null;
-            this.approvedSubject = null;
-            this.invoiceFormat = null;
-            this.invoiceNumber = null;
-            this.invoiceIssueDate = null;
-            this.invoiceTypeCode = null;
-            this.invoiceCurrencyCode = null;
-            this.projectReference = null;
-            this.purchaseOrderReference = null;
-            this.tenderOrLotReference = null;
-            this.sellerVatId = null;
-            this.sellerTaxRegistrationId = null;
-            this.buyerVatId = null;
-            this.buyerTaxRegistrationId = null;
-            this.buyerTaxRegistrationIdSchemeId = null;
-            this.buyerElectronicAddress = null;
-            this.buyerElectronicAddressSchemeId = null;
-            this.paymentDueDate = null;
-            this.invoiceTotalAmountWithVat = null;
-            this.amountDueForPayment = null;
-            this.vasId = null;
-            this.paidAmountToDate = null;
-            this.lastPaymentDate = null;
+            competentAuthorityId = null;
+            currentState = null;
+            fileName = null;
+            messageId = null;
+            dateTimeReceipt = null;
+            dateTimeDelivery = null;
+            notificationNotes = null;
+            notificationSignature = null;
+            invoiceHash = null;
+            invoiceOwner = null;
+            invoiceSignature = null;
+            approvedSubject = null;
+            invoiceFormat = null;
+            invoiceNumber = null;
+            invoiceIssueDate = null;
+            invoiceTypeCode = null;
+            invoiceCurrencyCode = null;
+            projectReference = null;
+            purchaseOrderReference = null;
+            tenderOrLotReference = null;
+            sellerVatId = null;
+            sellerTaxRegistrationId = null;
+            buyerVatId = null;
+            buyerTaxRegistrationId = null;
+            buyerTaxRegistrationIdSchemeId = null;
+            buyerElectronicAddress = null;
+            buyerElectronicAddressSchemeId = null;
+            paymentDueDate = null;
+            invoiceTotalAmountWithVat = null;
 
-            this.type = null;
-            this.hubId = null;
-            this.endEntityId = null;
-            this.time = 0;
+            amountDueForPayment = null;
+            vasId = null;
+            paidAmountToDate = null;
+            lastPaymentDate = null;
+            lastUpdate = null;
+            paid = null;
+
+            id = null;
+            hubId = null;
+            endEntityId = null;
+            time = 0;
+        }
+
+        public String getId() {
+            return id;
         }
 
         public long getTime() {
@@ -193,10 +209,6 @@ public class InvoiceSchemaV1 extends MappedSchema {
 
         public String getHubId() {
             return hubId;
-        }
-
-        public String getType() {
-            return type;
         }
 
         public String getInvoiceHash() {
@@ -329,6 +341,14 @@ public class InvoiceSchemaV1 extends MappedSchema {
     
         public String getLastPaymentDate() {
             return lastPaymentDate;
+        }
+
+        public String getLastUpdate() {
+            return lastUpdate;
+        }
+    
+        public String getPaid() {
+            return paid;
         }
 
     }

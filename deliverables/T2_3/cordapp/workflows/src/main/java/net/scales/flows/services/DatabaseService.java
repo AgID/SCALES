@@ -27,10 +27,10 @@ public class DatabaseService extends SingletonSerializeAsToken {
     }
 
     /**
-     * Executes a database query.
+     * Executes a database query
      *
-     * @param query  The query string with blanks for the parameters.
-     * @param params The parameters to fill the blanks in the query string.
+     * @param query  The query string with blanks for the parameters
+     * @param params The parameters to fill the blanks in the query string
      */
     protected List<Object> executeQuery(String query, Map<Integer, Object> params) throws SQLException {
         PreparedStatement statement = prepareStatement(query, params);
@@ -62,10 +62,10 @@ public class DatabaseService extends SingletonSerializeAsToken {
     }
 
     /**
-     * Executes a database update.
+     * Executes a database update
      *
-     * @param query  The query string with blanks for the parameters.
-     * @param params The parameters to fill the blanks in the query string.
+     * @param query  The query string with blanks for the parameters
+     * @param params The parameters to fill the blanks in the query string
      */
     protected void executeUpdate(String query, Map<Integer, Object> params) throws SQLException {
         PreparedStatement statement = prepareStatement(query, params);
@@ -84,10 +84,10 @@ public class DatabaseService extends SingletonSerializeAsToken {
 
     /**
      * Creates a PreparedStatement - a precompiled SQL statement to be executed
-     * against the database.
+     * against the database
      *
-     * @param query  The query string with blanks for the parameters.
-     * @param params The parameters to fill the blanks in the query string.
+     * @param query  The query string with blanks for the parameters
+     * @param params The parameters to fill the blanks in the query string
      *
      * @return The query string and params compiled into a PreparedStatement
      */
@@ -125,9 +125,7 @@ public class DatabaseService extends SingletonSerializeAsToken {
     private String getQueryString(PreparedStatement statement) {
         String sql = statement.toString();
 
-        sql = sql.substring(sql.indexOf(":") + 2);
-
-        return sql.replaceAll("\\s+", " ");
+        return sql.substring(sql.indexOf(":") + 2).replaceAll("\\s+", " ");
     }
 
 }

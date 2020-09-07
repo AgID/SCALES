@@ -12,7 +12,7 @@ import org.apache.commons.io.IOUtils;
 public class FileUtils {
 
     /**
-     * Convert the file to string
+     * Converts the file to string
      */
     public static String convertToString(InputStream stream) throws IOException {
         return IOUtils.toString(stream, StandardCharsets.UTF_8);
