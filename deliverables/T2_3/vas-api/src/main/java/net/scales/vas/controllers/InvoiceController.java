@@ -8,7 +8,9 @@ import net.scales.flows.UpdatePaymentInfoFlow;
 import net.scales.flows.UpdateInvoiceFlow;
 import net.scales.vas.models.Transaction;
 import net.scales.vas.models.ResponseError;
+import net.scales.vas.models.ResponseListSuccess;
 import net.scales.vas.models.Invoice;
+import net.scales.vas.models.InvoiceNoMetadata;
 import net.scales.vas.models.ResponseSuccess;
 import net.scales.vas.server.NodeRPCConnection;
 
@@ -29,8 +31,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.ByteArrayInputStream;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.NotAuthorizedException;
 
@@ -80,9 +88,11 @@ public class InvoiceController extends BaseController {
 	public Object getInvoiceList(
 		@RequestParam(name="invoiceNumber", defaultValue="") String invoiceNumber,
 		@RequestParam(name="invoiceTypeCode", defaultValue="") String invoiceTypeCode,
-		@RequestParam(name="invoiceIssueDate", defaultValue="") String invoiceIssueDate,
+		@RequestParam(name="invoiceIssueDateFrom", defaultValue="") String invoiceIssueDateFrom,
+		@RequestParam(name="invoiceIssueDateTo", defaultValue="") String invoiceIssueDateTo,
 		@RequestParam(name="sellerVatId", defaultValue="") String sellerVatId,
 		@RequestParam(name="buyerVatId", defaultValue="") String buyerVatId,
+		@RequestParam(name="getMetadata", defaultValue="true") boolean getMetadata,
 		@RequestParam(name="page", defaultValue="1") int page,
 		@RequestParam(name="pageSize", defaultValue="10") int pageSize
 	) {
@@ -91,16 +101,43 @@ public class InvoiceController extends BaseController {
 				return new ResponseError(HttpStatus.BAD_REQUEST, "sellerVatId or buyerVatId is required");
 			}
 
-			List<Invoice> invoices = new ArrayList<>();
+			if (!invoiceIssueDateFrom.isEmpty() || !invoiceIssueDateTo.isEmpty()) {
+				try {
+					DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+					format.setLenient(false);
 
-			// Gets invoice list from corda node
-			List<Object> rows = proxy.startFlowDynamic(GetInvoiceListFlow.class, invoiceNumber, invoiceTypeCode, invoiceIssueDate, sellerVatId, buyerVatId, page, pageSize).getReturnValue().get();
+					Date start = format.parse(invoiceIssueDateFrom);
+					Date end = format.parse(invoiceIssueDateTo);
 
-			for (Object row : rows) {
-				invoices.add(createInvoice((List<Object>) row));
+					if (start.compareTo(end) > 0) {
+						return new ResponseError(HttpStatus.BAD_REQUEST, "invoiceIssueDateFrom or invoiceIssueDateTo is invalid");
+					}
+
+				} catch (ParseException e) {
+					return new ResponseError(HttpStatus.BAD_REQUEST, "invoiceIssueDateFrom or invoiceIssueDateTo is invalid");
+				}
 			}
 
-			return new ResponseSuccess(invoices);
+			List<Object> invoices = new ArrayList<>();
+
+			// Gets invoice list from corda node
+			LinkedHashMap<String, Object> result = proxy.startFlowDynamic(GetInvoiceListFlow.class, invoiceNumber, invoiceTypeCode, invoiceIssueDateFrom, invoiceIssueDateTo, sellerVatId, buyerVatId, page, pageSize).getReturnValue().get();
+
+			long total = (long) result.get("total");
+			List<Object> rows = (List<Object>) result.get("records");
+
+			if (getMetadata) {
+				for (Object row : rows) {
+					invoices.add(createInvoice((List<Object>) row));
+				}
+
+			} else {
+				for (Object row : rows) {
+					invoices.add(createInvoiceNoMetadata((List<Object>) row));
+				}
+			}
+
+			return new ResponseListSuccess(total, invoices);
 
 		} catch(Exception ex) {
 			logger.error("", ex);
@@ -248,6 +285,15 @@ public class InvoiceController extends BaseController {
 			data.get(35).toString(),
 			data.get(36).toString(),
 			data.get(37).toString()
+		);
+	}
+
+	private InvoiceNoMetadata createInvoiceNoMetadata(List<Object> data) {
+		return new InvoiceNoMetadata(
+			data.get(0).toString(),
+			data.get(1).toString(),
+			data.get(2).toString(),
+			data.get(16).toString()
 		);
 	}
 

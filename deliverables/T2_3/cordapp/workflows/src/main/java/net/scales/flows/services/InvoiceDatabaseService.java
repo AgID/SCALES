@@ -126,9 +126,66 @@ public class InvoiceDatabaseService extends DatabaseService {
     }
 
     /**
+     * Counts invoice list by filter
+     */
+    public long countInvoiceList(
+        String invoiceNumber,
+        String invoiceTypeCode,
+        String invoiceIssueDateFrom,
+        String invoiceIssueDateTo,
+        String sellerVatId,
+        String buyerVatId
+    ) throws SQLException {
+        String query = "SELECT  COUNT(*) AS CNT ";
+        query       += "FROM    INVOICE_STATES T ";
+        query       += "WHERE   (? = '' OR (? <> '' AND T.INVOICE_NUMBER = ?)) ";
+        query       += "AND     (? = '' OR (? <> '' AND T.INVOICE_TYPE_CODE = ?)) ";
+        query       += "AND     (? = '' OR (? <> '' AND T.INVOICE_ISSUE_DATE BETWEEN ? AND ?)) ";
+        query       += "AND     (? = '' OR (? <> '' AND T.SELLER_VAT_ID = ?)) ";
+        query       += "AND     (? = '' OR (? <> '' AND T.BUYER_VAT_ID = ?)) ";
+        query       += "AND     T.TIME = (SELECT MAX(TIME) FROM INVOICE_STATES WHERE ID = T.ID)";
+
+        Map<Integer, Object> params = new HashMap<Integer, Object>();
+
+        params.put(1, invoiceNumber);
+        params.put(2, invoiceNumber);
+        params.put(3, invoiceNumber);
+        params.put(4, invoiceTypeCode);
+        params.put(5, invoiceTypeCode);
+        params.put(6, invoiceTypeCode);
+        params.put(7, invoiceIssueDateFrom);
+        params.put(8, invoiceIssueDateFrom);
+        params.put(9, invoiceIssueDateFrom);
+        params.put(10, invoiceIssueDateTo);
+        params.put(11, sellerVatId);
+        params.put(12, sellerVatId);
+        params.put(13, sellerVatId);
+        params.put(14, buyerVatId);
+        params.put(15, buyerVatId);
+        params.put(16, buyerVatId);
+
+        List<Object> rows = executeQuery(query, params);
+
+        if (rows.size() > 0) {
+            return (long) ((List<Object>) rows.get(0)).get(0);
+        }
+
+        return 0;
+    }
+
+    /**
      * Gets the invoice list by filter
      */
-    public List<Object> getInvoiceList(String invoiceNumber, String invoiceTypeCode, String invoiceIssueDate, String sellerVatId, String buyerVatId, int page, int pageSize) throws SQLException {
+    public List<Object> getInvoiceList(
+        String invoiceNumber,
+        String invoiceTypeCode,
+        String invoiceIssueDateFrom,
+        String invoiceIssueDateTo,
+        String sellerVatId,
+        String buyerVatId,
+        int page,
+        int pageSize
+    ) throws SQLException {
         String query = "SELECT  T.ID, ";
         query       += "        T.HUB_ID, ";
         query       += "        T.END_ENTITY_ID, ";
@@ -170,7 +227,7 @@ public class InvoiceDatabaseService extends DatabaseService {
         query       += "FROM    INVOICE_STATES T ";
         query       += "WHERE   (? = '' OR (? <> '' AND T.INVOICE_NUMBER = ?)) ";
         query       += "AND     (? = '' OR (? <> '' AND T.INVOICE_TYPE_CODE = ?)) ";
-        query       += "AND     (? = '' OR (? <> '' AND T.INVOICE_ISSUE_DATE = ?)) ";
+        query       += "AND     (? = '' OR (? <> '' AND T.INVOICE_ISSUE_DATE BETWEEN ? AND ?)) ";
         query       += "AND     (? = '' OR (? <> '' AND T.SELLER_VAT_ID = ?)) ";
         query       += "AND     (? = '' OR (? <> '' AND T.BUYER_VAT_ID = ?)) ";
         query       += "AND     T.TIME = (SELECT MAX(TIME) FROM INVOICE_STATES WHERE ID = T.ID) ";
@@ -185,17 +242,18 @@ public class InvoiceDatabaseService extends DatabaseService {
         params.put(4, invoiceTypeCode);
         params.put(5, invoiceTypeCode);
         params.put(6, invoiceTypeCode);
-        params.put(7, invoiceIssueDate);
-        params.put(8, invoiceIssueDate);
-        params.put(9, invoiceIssueDate);
-        params.put(10, sellerVatId);
+        params.put(7, invoiceIssueDateFrom);
+        params.put(8, invoiceIssueDateFrom);
+        params.put(9, invoiceIssueDateFrom);
+        params.put(10, invoiceIssueDateTo);
         params.put(11, sellerVatId);
         params.put(12, sellerVatId);
-        params.put(13, buyerVatId);
+        params.put(13, sellerVatId);
         params.put(14, buyerVatId);
         params.put(15, buyerVatId);
-        params.put(16, pageSize);
-        params.put(17, (page - 1) * pageSize);
+        params.put(16, buyerVatId);
+        params.put(17, pageSize);
+        params.put(18, (page - 1) * pageSize);
 
         return executeQuery(query, params);
     }
