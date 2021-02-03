@@ -1,0 +1,11 @@
+--2021-02-03 14:57:16--  https://joinup.ec.europa.eu/sites/default/files/custom-page/attachment/2020-03/EUPL-1.2%20EN.txt
+Resolving joinup.ec.europa.eu (joinup.ec.europa.eu)... 13.225.238.62, 13.225.238.34, 13.225.238.93, ...
+Connecting to joinup.ec.europa.eu (joinup.ec.europa.eu)|13.225.238.62|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 13827 (14K) [text/plain]
+Saving to: ‘EUPL-1.2 EN.txt’
+
+     0K .......... ...                                        100%  271M=0s
+
+2021-02-03 14:57:16 (271 MB/s) - ‘EUPL-1.2 EN.txt’ saved [13827/13827]
+
