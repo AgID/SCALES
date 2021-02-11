@@ -1,0 +1,394 @@
+swagger: '2.0'
+info:
+  version: 0.0.1
+  title: SCALES VAS API
+  description: "# SCALES VAS Open APIs\n Scales Node Value Added Services [OpenAPI](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md) Specification"
+  license: {name: scales vas}
+host: api.node.scales.eu
+basePath: /rest/api/0.0.1/
+schemes: [https]
+consumes: [application/json]
+produces: [application/json]
+
+paths:
+  /hublist:
+    get:
+      tags: [hub, paginated]
+      summary: "get list of hubs attested on a scales node"
+      operationId: "getHubList"
+      produces:
+      - "application/json"
+      parameters:
+      - name: index
+        type: integer
+        in: query
+        description: "index of the page to be returned"
+      - name: itemsPerPage
+        type: integer
+        in: query
+        description: "Items per page to be returned"
+      responses:
+        200:
+          description: "paginated list of all Hub attested on the host node"
+  
+  /{hubId}/endEntitylist:
+    get:
+      tags: [hub, endEntity paginated]
+      summary: "get list of all End Entities managed by a hub"
+      operationId: "getEndEntityListbyHub"
+      produces:
+      - "application/json"
+      parameters:
+      - name: hubId
+        type: string
+        in: path
+        required: true
+        description: "id of the hub to filter End Entities"
+      - name: index
+        type: integer
+        in: query
+        description: "index of the page to be returned"
+      - name: itemsPerPage
+        type: integer
+        in: query
+        description: "Items per page to be returned"
+      responses:
+        200:
+          description: "Paginated list of all End Entities managed by hub"
+          
+  /{endEntityId}/invoicelist:
+    get:
+      tags: [Invoice, endEntity paginated]
+      summary: "get list of all Invoice by End Entities"
+      operationId: "getInvoiceListbyEndEntity"
+      produces:
+      - "application/json"
+      parameters:
+      - name: endEntityId
+        type: string
+        in: path
+        required: true
+        description: "id of the End Entity to filter Invoices"
+      - name: index
+        type: integer
+        in: query
+        description: "index of the page to be returned"
+      - name: itemsPerPage
+        type: integer
+        in: query
+        description: "Items per page to be returned"
+      responses:
+        200:
+          description: "Paginated list of all Invoices by End Entities"
+  
+  /invoice/{invoiceId}:
+    get:
+      tags: [invoice]
+      summary: "get Invoice Metadata by InvoiceID"
+      description: "returns metadata for a specific invoice"
+      operationId: "getInvoiceMetadatabyId"
+      produces:
+        - "application/json"
+      parameters:
+        - name: invoiceId
+          in: path
+          description: "Technical Id of the invoice to be returned"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "successfull operation"
+          schema:
+            $ref: "#/definitions/invoiceMetadata"
+        400: 
+          description: "invalid InvoiceID supplied"
+        404:
+          description: "Invoice not found"
+          
+  /invoice/download/{invoiceId}:
+    get:
+      tags: [invoice]
+      summary: "get Original Invoice by InvoiceID"
+      description: "returns Original file for a specific invoice"
+      operationId: "getInvoiceId"
+      produces:
+        - "application/json"
+      parameters:
+        - name: invoiceId
+          in: path
+          description: "Technical Id of the invoice to be returned"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "successfull operation"
+        400: 
+          description: "invalid InvoiceID supplied"
+        404:
+          description: "Invoice not found"
+          
+  /endEntity/{endEntityId}:
+    get:
+      tags: [End Entity]
+      summary: "get End Entity by End Entity ID"
+      description: "returns info for a specific End Entity"
+      operationId: "getEndEntityById"
+      produces:
+        - "application/json"
+      parameters:
+        - name: endEntityId
+          in: path
+          description: "Info about a specific End Entity"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "successfull operation"
+          schema:
+            $ref: "#/definitions/endEntity"
+        400: 
+          description: "invalid End Entity ID supplied"
+        404:
+          description: "End Entity not found"
+          
+  /hub/{hubId}:
+    get:
+      tags: [hub]
+      summary: "get hub by hub ID"
+      description: "returns info for a specific hub"
+      operationId: "getHubById"
+      produces:
+        - "application/json"
+      parameters:
+        - name: hubId
+          in: path
+          description: "Info about a specific Hub"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "successfull operation"
+          schema:
+            $ref: "#/definitions/hub"
+        400: 
+          description: "invalid hub ID supplied"
+        404:
+          description: "hub not found"
+          
+  /paymentInfo/{invoiceId}:
+    post:
+      summary: "update of Payment Informatin by Vas"
+      tags: [provisioning]
+      parameters:
+      - {$ref: '#/parameters/invoiceId'}
+      - in: body
+        name: body
+        schema: {$ref: '#/definitions/paymentInformation'}
+      responses:
+        '200':
+          description: "update successful"
+          
+  /invoiceProcessMetadataUpdate/{invoiceId}:
+    post:
+      summary: "update of Payment Informatin by Vas"
+      tags: [provisioning]
+      parameters:
+      - {$ref: '#/parameters/invoiceId'}
+      - in: body
+        name: body
+        schema: {$ref: '#/definitions/processBoundMetadata'}
+      responses:
+        '200':
+          description: "update successful"
+  
+          
+definitions:
+  invoiceMetadata:
+    type: object
+    properties:
+      invoiceId:
+        type: string
+        description: |
+          "Invoice technical unique identifier"
+      dataBound: {$ref: '#/definitions/dataBoundMetadata'}
+      processBound: {$ref: '#/definitions/processBoundMetadata'}
+      paymentInfo: {$ref: '#/definitions/paymentInformation'}
+      
+      
+  processBoundMetadata:
+    type: object
+    properties:
+      competentAuthorityUniqueId:
+        type: string
+        description: |
+          "for instance SDI Unique Identifier"
+      invoiceCurentState:
+        type: string
+        enum: [OPEN, CLOSED]
+        description: |
+          "current state of the Token"
+      invoiceCurrentOwner:
+        type: string
+        description: |
+          "current invoice owner id"
+      approvedSubject:
+        type: string
+        description: |
+          "current approved Vas ID"
+          
+  dataBoundMetadata:
+    type: object
+    properties:
+      invoiceFormat:
+        type: string
+        enum: [FSM10, FPA12, FPR12, UBL_CEN, CII_CEN]
+        description: |
+          "Original invoice reference format"
+      invoiceNumber: 
+        type: string
+        description: |
+          "Invoice unique number"
+      invoiceIssueDate:
+        type: string
+        description: |
+          "invoice issuance date"
+      invoiceTypeCode:
+        type: string
+        description: |
+          "Original invoice reference format code"
+      invoiceCurrencyCode:
+        type: string
+        description: |
+          "Original invoice currency code"
+      projectReference:
+        type: string
+        description: |
+          "Invoice project reference"
+      purchaseOrderReference:
+        type: string
+        description: |
+          "invoice purchare sorder referencee"
+      tenderOrLotReference:
+        type: string
+        description: |
+          "Invoice tender or lot reference"
+      sellerVATIdentifier:
+        type: string
+        description: |
+          "Vat number of the active subject"
+      sellerTaxRegistrationIdentifier:
+        type: string
+        description: |
+          "Taxpayer identification number of the active subject"
+      buyerVATIdentifier:
+        type: string
+        description: |
+          "Vat number of the passive subject"
+      buyerTaxRegistrationIdentifier:
+        type: string
+        description: |
+          "Taxpayer identification number of the passive subject"
+      buyerTaxRegistrationIdentifierSchemeIdentifier:
+        type: string
+        description: |
+          "Scheme identifier of the tTaxpayer identification number for the passive subject
+      buyerElectronicAddress:
+        type: string
+        description: |
+          "Buyer electronic address"
+      buyerElectronicAddressSchemeIdentifier:
+        type: string
+        description: |
+          "Scheme identifier of the buyer electronic address"
+      paymentDueDate:
+        type: string
+        description: |
+          "due date of the payment"
+      invoiceTotalAmountWithVAT:
+        type: string
+        description: |
+          "total amount to be paid"
+      
+          
+  paymentInformation:
+    type: object
+    properties:
+      vasId: 
+        type: string
+        description: "vas identifier"
+      PaidAmountToDate:
+        type: string
+        description: "amount paid up to date"
+      LastPaymentDate:
+        type: string
+        description: "date of last payment done"
+      amountDueForPayment:
+        type: string
+        description: "amount left to complete the payment"
+      
+  Vas:
+    type: object
+    properties:
+      vasId:
+        type: string
+        description: |
+          "Vas identifier"
+      vasVat: 
+        type: string
+        description: |
+          "Vas VAT number"
+      vasName: 
+        type: string
+        description: |
+          "name of the VAS"
+  
+   
+  endEntity:
+    type: object
+    properties:
+      endEndityId:
+        type: string
+        description: |
+          "Id of the End Entity"
+      endEntityVat: 
+        type: string
+        description: |
+          "End Entity Vat number"
+      endEndityName: 
+        type: string
+        description: |
+          "End Entity Name"
+          
+  hub:
+    type: object
+    properties:
+      hubId:
+        type: string
+        description: |
+          "Hub identifier"
+      hubVat: 
+        type: string
+        description: |
+          "Hub Vat Number"
+      hubName: 
+        type: string
+        description: |
+          "hub name"
+
+parameters:
+  invoiceId:
+    name: invoiceId
+    in: path
+    type: string
+    required: true
+    description: Invoice technical unique Id of the invoice to be retrieved
+  
+securityDefinitions:
+  apiKey:
+    type: apiKey
+    description: |
+      The API Key provided to you by Infocert.
+    name: x-api-key
+    in: header
+security:
+- apiKey: []

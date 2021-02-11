@@ -1,0 +1,1032 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: Scales API
+  description: Scales API 1.0
+  contact: {}
+  x-codegen-settings:
+    Nullify404: false
+    GenerateAsyncCode: true
+    UseMethodPrefix: false
+    UseModelPostfix: false
+    UseControllerPrefix: true
+    UseEnumPostfix: true
+    CollectParameters: false
+    UseConstructorsForConfig: false
+    UseCommonSDKLibrary: false
+    iOSUseAppInfoPlist: false
+    AndroidUseAppManifest: false
+    BodySerialization: 0
+    EnableAdditionalModelProperties: false
+    PreserveParameterOrder: true
+    AppendContentHeaders: true
+    iOSGenerateCoreData: false
+    GenerateInterfaces: false
+    NodeHttpClient: NODE_REQUEST
+    ValidateRequiredParameters: false
+    JavaUsePropertiesConfig: false
+    Timeout: 0
+    StoreTimezoneInformation: false
+    EnablePHPComposerVersionString: false
+    EnableLogging: false
+    ArraySerialization: Indexed
+    ModelSerializationScheme: Json
+    UseExceptionPrefix: true
+    RunscopeEnabled: false
+    AndroidHttpClient: ANDROID_OK
+    ObjCHttpClient: UNIREST
+    CSharpHttpClient: UNIREST
+    PHPHttpClient: UNIREST
+    JavaHttpClient: JAVA_OK
+    ParameterArrayFormat: ParamArrayWithIndex
+    SecurityProtocols:
+    - Ssl3
+    - Tls
+    GenerateTravisConfig: false
+    GenerateCircleConfig: false
+    GenerateAppveyorConfig: false
+    GenerateJenkinsConfig: false
+    EnableHttpCache: false
+    Retries: 0
+    RetryInterval: 1
+    GenerateAdvancedDocs: true
+    UnderscoreNumbers: true
+    UseSingletonPattern: true
+    DisableLinting: false
+    ApplyCustomizations: []
+    SortResources: false
+    AllowSkippingSSLCertVerification: false
+    DoNotSplitWords: []
+    EnableGlobalUserAgent: true
+    ReturnCompleteHttpResponse: false
+    GenerateModels: true
+    GenerateExceptions: true
+    IgnoreIfNullJson: false
+    DisableDocs: false
+    LiftParameterDescriptionFromCustomType: false
+    ThrowForHttpErrorStatusCodes: true
+    ResponseMapping:
+      Type: Simple
+    ForceKeywordArgsInRuby: false
+    SymbolizeHashKeysInRuby: false
+    UsageExampleEndpoint:
+      Description: ''
+      EndpointGroupName: ''
+      EndpointName: ''
+    IsLatestVersion: false
+    EnableImmutableModels: false
+    GenerateEnums: true
+    BackoffFactor: 0
+    UserConfigurableRetries: true
+    UseEndpointMethodName: false
+    EncodeTemplateParameters: true
+    GenerateExamplesForOptionalFields: false
+    MultitargetDotnetVersions: false
+  x-server-configuration:
+    default-environment: production
+    default-server: Server 1
+    environments:
+    - name: production
+      servers:
+      - name: Server 1
+        url: 'http:'
+      - name: Server 2
+        url: 'http:'
+    parameters: []
+  x-image-uri: ''
+basePath: /
+securityDefinitions: {}
+schemes: []
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /auth/realms/scales/protocol/openid-connect/token:
+    post:
+      description: This Api is needed by the VAS in order to get an authorization token on behalf of the Subject who is authenticating to the Identity provider.
+      summary: get api Access Token
+      tags:
+      - Misc
+      operationId: getapiAccessToken
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        default: Bearer {token}
+        type: string
+      - name: client_id
+        in: formData
+        required: true
+        type: string
+        x-example: idp
+        description: ''
+      - name: username
+        in: formData
+        required: true
+        type: string
+        x-example: admin.test
+        description: ''
+      - name: password
+        in: formData
+        required: true
+        type: string
+        x-example: '{{password}}'
+        description: ''
+      - name: grant_type
+        in: formData
+        required: true
+        type: string
+        x-example: password
+        description: ''
+      - name: client_secret
+        in: formData
+        required: true
+        type: string
+        x-example: 0cffe95c-bd23-4025-81e7-47bbaa7ad4e1
+        description: ''
+      responses:
+        200:
+          description: ''
+          headers: {}
+      x-unitTests:
+      - request:
+          method: POST
+          uri: //auth/realms/scales/protocol/openid-connect/token
+          headers:
+            Content-Type: application/x-www-form-urlencoded
+          body: client_id=idp&username=admin.test&password=%7B%7Bpassword%7D%7D&grant_type=password&client_secret=0cffe95c-bd23-4025-81e7-47bbaa7ad4e1
+        expectedResponse:
+          x-allowExtraHeaders: true
+          x-bodyMatchMode: NONE
+          x-arrayOrderedMatching: false
+          x-arrayCheckCount: false
+          x-matchResponseSchema: true
+          statusCode: 200
+          headers: {}
+        x-testShouldPass: true
+        x-testEnabled: true
+        x-testName: get api Access Token
+        x-testDescription: This Api is needed by the VAS in order to get an authorization token on behalf of the Subject who is authenticating to the Identity provider.
+      x-server-name: Server 1
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  /api/upload-invoice:
+    post:
+      description: upload invoice to mint a new token representing an Invoice
+      summary: Uploads and mint invoice
+      tags:
+      - Misc
+      operationId: Uploadsandmintinvoice
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        default: Bearer {token}
+        type: string
+      - name: invoice
+        in: formData
+        required: true
+        type: string
+        description: ''
+      - name: sdi
+        in: formData
+        required: false
+        type: string
+        description: 'for indirect flow SDI notification must be provider. If SDi notification is not present, Scales assumes direct flow'
+      responses:
+        200:
+          description: ''
+          headers: {}
+      x-unitTests:
+      - request:
+          method: POST
+          uri: /api/upload-invoice
+        expectedResponse:
+          x-allowExtraHeaders: true
+          x-bodyMatchMode: NONE
+          x-arrayOrderedMatching: false
+          x-arrayCheckCount: false
+          x-matchResponseSchema: true
+          statusCode: 200
+          headers: {}
+        x-testShouldPass: true
+        x-testEnabled: true
+        x-testName: Uploads and mint invoice
+        x-testDescription: upload invoice to mint a new token representing and invoice
+      x-server-name: Server 1
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  /api/upload-order:
+    post:
+      description: upload invoice to mint a new token representing an Order
+      summary: Uploads and mint order
+      tags:
+      - Misc
+      operationId: Uploadsandmintorder
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        default: Bearer {token}
+        type: string
+      - name: order
+        in: formData
+        required: true
+        type: string
+        description: ''
+      - name: nso
+        in: formData
+        required: true
+        type: string
+        description: ''
+      responses:
+        200:
+          description: ''
+          headers: {}
+      x-unitTests:
+      - request:
+          method: POST
+          uri: /api/upload-order
+        expectedResponse:
+          x-allowExtraHeaders: true
+          x-bodyMatchMode: NONE
+          x-arrayOrderedMatching: false
+          x-arrayCheckCount: false
+          x-matchResponseSchema: true
+          statusCode: 200
+          headers: {}
+        x-testShouldPass: true
+        x-testEnabled: true
+        x-testName: Uploads and mint order
+        x-testDescription: upload invoice to mint a new token representing an order
+      x-server-name: Server 1
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  /api/{endEntityID}/invoiceList:
+    get:
+      summary: invoice List
+      tags:
+      - Misc
+      operationId: invoiceList
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        default: Bearer {token}
+        type: string
+      - name: page
+        in: query
+        required: true
+        type: string
+        x-example: n
+        description: ''
+      - name: pageSize
+        in: query
+        required: true
+        type: string
+        x-example: m
+        description: ''
+      - name: endEntityID
+        in: path
+        required: true
+        type: string
+        description: ''
+      responses:
+        200:
+          description: ''
+          headers: {}
+      x-unitTests: []
+      x-server-name: Server 1
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  /api/invoiceList:
+    get:
+      summary: Multiparams invoice List
+      tags:
+      - Misc
+      operationId: MultiparamsinvoiceList
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        default: Bearer {token}
+        type: string
+      - name: page
+        in: query
+        required: true
+        type: string
+        x-example: 1
+        description: ''
+      - name: pageSize
+        in: query
+        required: true
+        type: string
+        x-example: 10
+        description: ''
+      - name: invoiceTypeCode
+        in: query
+        required: true
+        type: string
+        x-example: 038
+        description: ''
+      - name: buyerVatId
+        in: query
+        required: true
+        type: string
+        x-example: 'IT01327893728'
+        description: ''
+      - name: sellerVatId
+        in: query
+        required: true
+        type: string
+        x-example: ''
+        description: ''  
+      - name: invoiceIssueDate
+        in: query
+        required: true
+        type: string
+        x-example: ''
+        description: ''
+      - name: invoiceNumber
+        in: query
+        required: true
+        type: string
+        x-example: ''
+        description: ''
+      - name: invoiceIssueDateFrom
+        in: query
+        required: true
+        type: string
+        x-example: ''
+        description: ''
+      - name: invoiceIssueDateTo
+        in: query
+        required: true
+        type: string
+        x-example: ''
+        description: ''
+      responses:
+        200:
+          description: ''
+          headers: {}
+      x-unitTests:
+      - request:
+          method: GET
+          uri: /api/invoiceList?page=n&pageSize=m&invoiceTypeCode=k&buyerVatId=%7BeeVat%7D
+        expectedResponse:
+          x-allowExtraHeaders: true
+          x-bodyMatchMode: NONE
+          x-arrayOrderedMatching: false
+          x-arrayCheckCount: false
+          x-matchResponseSchema: true
+          statusCode: 200
+          headers: {}
+        x-testShouldPass: true
+        x-testEnabled: true
+        x-testName: Multiparams invoice List
+      x-server-name: Server 1
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  /api/invoice/{invoiceId}:
+    get:
+      summary: invoice by Invoice uniqueId
+      tags:
+      - Misc
+      operationId: invoicebyInvoiceuniqueId
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        default: Bearer {token}
+        type: string
+      - name: invoiceId
+        in: path
+        required: true
+        type: string
+      responses:
+        200:
+          description: ''
+          headers: {}
+      x-unitTests:
+      - request:
+          method: GET
+          uri: /api/invoice/{}invoiceId}
+        expectedResponse:
+          x-allowExtraHeaders: true
+          x-bodyMatchMode: NONE
+          x-arrayOrderedMatching: false
+          x-arrayCheckCount: false
+          x-matchResponseSchema: true
+          statusCode: 200
+          headers: {}
+        x-testShouldPass: true
+        x-testEnabled: true
+        x-testName: invoice by Invoice uniqueId
+      x-server-name: Server 1
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  /api/invoice/download/{invoiceId}:
+    get:
+      summary: downloads invoice by Invoice uniqueId
+      tags:
+      - Misc
+      operationId: downloadsinvoicebyInvoiceuniqueId
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        default: Bearer {token}
+        type: string
+      - name: invoiceId
+        in: path
+        required: true
+        type: string
+      responses:
+        200:
+          description: ''
+          headers: {}
+      x-unitTests:
+      - request:
+          method: GET
+          uri: /api/invoice/download/{invoiceId}
+        expectedResponse:
+          x-allowExtraHeaders: true
+          x-bodyMatchMode: NONE
+          x-arrayOrderedMatching: false
+          x-arrayCheckCount: false
+          x-matchResponseSchema: true
+          statusCode: 200
+          headers: {}
+        x-testShouldPass: true
+        x-testEnabled: true
+        x-testName: downloads invoice by Invoice uniqueId
+      x-server-name: Server 1
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  /api/{endEntityId}/orderList:
+    get:
+      summary: order List
+      tags:
+      - Misc
+      operationId: orderList
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        default: Bearer {token}
+        type: string
+      - name: page
+        in: query
+        required: true
+        type: string
+        x-example: pageNumber
+        description: ''
+      - name: pageSize
+        in: query
+        required: true
+        type: string
+        x-example: pageSize
+        description: ''
+      - name: endEntityId
+        in: path
+        required: true
+        type: string
+      responses:
+        200:
+          description: ''
+          headers: {}
+      x-unitTests:
+      - request:
+          method: GET
+          uri: /api/f9dddef0-e3c4-4fc7-84b1-e98b26132ace/orderList?page=pageNumber&pageSize=pageSize
+        expectedResponse:
+          x-allowExtraHeaders: true
+          x-bodyMatchMode: NONE
+          x-arrayOrderedMatching: false
+          x-arrayCheckCount: false
+          x-matchResponseSchema: true
+          statusCode: 200
+          headers: {}
+        x-testShouldPass: true
+        x-testEnabled: true
+        x-testName: order List
+      x-server-name: Server 1
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  /api/order/{orderId}:
+    get:
+      summary: get order by orderid
+      tags:
+      - Misc
+      operationId: getorderbyorderid
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        default: Bearer {token}
+        type: string
+      - name: orderId
+        in: path
+        required: true
+        type: string
+      responses:
+        200:
+          description: ''
+          headers: {}
+      x-unitTests:
+      - request:
+          method: GET
+          uri: /api/order/(orderId)
+        expectedResponse:
+          x-allowExtraHeaders: true
+          x-bodyMatchMode: NONE
+          x-arrayOrderedMatching: false
+          x-arrayCheckCount: false
+          x-matchResponseSchema: true
+          statusCode: 200
+          headers: {}
+        x-testShouldPass: true
+        x-testEnabled: true
+        x-testName: get order by orderid
+      x-server-name: Server 1
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  /api/order/download/{orderId}:
+    get:
+      summary: downloads order by orderid
+      tags:
+      - Misc
+      operationId: downloadsorderbyorderid
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        default: Bearer {token}
+        type: string
+      - name: orderId
+        in: path
+        required: true
+        type: string
+      responses:
+        200:
+          description: ''
+          headers: {}
+      x-unitTests:
+      - request:
+          method: GET
+          uri: /api/order/download/(orderID)
+        expectedResponse:
+          x-allowExtraHeaders: true
+          x-bodyMatchMode: NONE
+          x-arrayOrderedMatching: false
+          x-arrayCheckCount: false
+          x-matchResponseSchema: true
+          statusCode: 200
+          headers: {}
+        x-testShouldPass: true
+        x-testEnabled: true
+        x-testName: downloads order by orderid
+      x-server-name: Server 1
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  /api/(hubId)/endEntityList:
+    get:
+      summary: End entitiy list
+      tags:
+      - Misc
+      operationId: Endentitiylist
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        default: Bearer {token}
+        type: string
+      responses:
+        200:
+          description: ''
+          headers: {}
+      x-unitTests:
+      - request:
+          method: GET
+          uri: /api/(hubID)/endEntityList
+        expectedResponse:
+          x-allowExtraHeaders: true
+          x-bodyMatchMode: NONE
+          x-arrayOrderedMatching: false
+          x-arrayCheckCount: false
+          x-matchResponseSchema: true
+          statusCode: 200
+          headers: {}
+        x-testShouldPass: true
+        x-testEnabled: true
+        x-testName: End entitiy list
+      x-server-name: Server 1
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  //api/endEntity/(endEntotyID):
+    get:
+      summary: End Entity Info
+      tags:
+      - Misc
+      operationId: EndEntityInfo
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        default: Bearer {token}
+        type: string
+      responses:
+        200:
+          description: ''
+          headers: {}
+      x-unitTests:
+      - request:
+          method: GET
+          uri: //api/endEntity/(endEntotyID)
+        expectedResponse:
+          x-allowExtraHeaders: true
+          x-bodyMatchMode: NONE
+          x-arrayOrderedMatching: false
+          x-arrayCheckCount: false
+          x-matchResponseSchema: true
+          statusCode: 200
+          headers: {}
+        x-testShouldPass: true
+        x-testEnabled: true
+        x-testName: End Entity Info
+      x-server-name: Server 1
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  /api/invoiceProcessMetadataUpdate/(InvoiceID):
+    post:
+      summary: Process Metadata Update
+      tags:
+      - Misc
+      operationId: ProcessMetadataUpdate
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        default: Bearer {token}
+        type: string
+      - name: competentAuthorityUniqueId
+        in: formData
+        required: true
+        type: integer
+        format: int32
+        x-example: 321
+        description: ''
+      - name: invoiceCurentState
+        in: formData
+        required: true
+        type: string
+        x-example: InvoiceCurrentState
+        description: ''
+      - name: invoiceCurrentOwner
+        in: formData
+        required: true
+        type: string
+        x-example: InvoiceCurrentOwner
+        description: ''
+      - name: approvedSubject
+        in: formData
+        required: true
+        type: string
+        x-example: ApprovedSubject
+        description: ''
+      responses:
+        200:
+          description: ''
+          headers: {}
+      x-unitTests:
+      - request:
+          method: POST
+          uri: /api/invoiceProcessMetadataUpdate/(InvoiceID)
+          headers:
+            Content-Type: application/x-www-form-urlencoded
+          body: competentAuthorityUniqueId=321&invoiceCurentState=InvoiceCurrentState&invoiceCurrentOwner=InvoiceCurrentOwner&approvedSubject=ApprovedSubject
+        expectedResponse:
+          x-allowExtraHeaders: true
+          x-bodyMatchMode: NONE
+          x-arrayOrderedMatching: false
+          x-arrayCheckCount: false
+          x-matchResponseSchema: true
+          statusCode: 200
+          headers: {}
+        x-testShouldPass: true
+        x-testEnabled: true
+        x-testName: Process Metadata Update
+      x-server-name: Server 1
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  /api/paymentInfo/(invoiceId):
+    post:
+      summary: Vas updates Payment Info for invoice ID
+      tags:
+      - Misc
+      operationId: VasupdatesPaymentInfoforinvoiceID
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        default: Bearer {token}
+        type: string
+      - name: vasId
+        in: formData
+        required: true
+        type: string
+        x-example: VasId
+        description: ''
+      - name: paidAmountToDate
+        in: formData
+        required: true
+        type: string
+        x-example: PaidAmountToDate
+        description: ''
+      - name: lastPaymentDate
+        in: formData
+        required: true
+        type: string
+        x-example: LastPaymentDate
+        description: ''
+      - name: amountDueForPayment
+        in: formData
+        required: true
+        type: string
+        x-example: AmountDueForPayment
+        description: ''
+      - name: lastUpdate
+        in: formData
+        required: true
+        type: string
+        x-example: LastUpdate
+        description: ''
+      - name: paid
+        in: formData
+        required: true
+        type: string
+        x-example: (paid / partially_paid  unpaid)
+        description: ''
+      responses:
+        200:
+          description: ''
+          headers: {}
+      x-unitTests:
+      - request:
+          method: POST
+          uri: /api/paymentInfo/(invoiceId)
+          headers:
+            Content-Type: application/x-www-form-urlencoded
+          body: vasId=VasId&paidAmountToDate=PaidAmountToDate&lastPaymentDate=LastPaymentDate&amountDueForPayment=AmountDueForPayment&lastUpdate=LastUpdate&paid=%28paid%20%2F%20partially_paid%20%20unpaid%29
+        expectedResponse:
+          x-allowExtraHeaders: true
+          x-bodyMatchMode: NONE
+          x-arrayOrderedMatching: false
+          x-arrayCheckCount: false
+          x-matchResponseSchema: true
+          statusCode: 200
+          headers: {}
+        x-testShouldPass: true
+        x-testEnabled: true
+        x-testName: Vas updates Payment Info for invoice ID
+      x-server-name: Server 1
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  /webhook/subscribe:
+    post:
+      summary: Subscribe to events
+      tags:
+      - Misc
+      operationId: Subscribetoevents
+      deprecated: false
+      produces:
+      - application/json
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        default: Bearer {token}
+        type: string
+      - name: event
+        in: formData
+        required: true
+        type: string
+        x-example: ("order" / "invoice")
+        description: ''
+      - name: url
+        in: formData
+        required: true
+        type: string
+        x-example: (callback url)
+        description: ''
+      responses:
+        200:
+          description: ''
+          headers: {}
+      x-unitTests:
+      - request:
+          method: POST
+          uri: /webhook/subscribe
+          headers:
+            Content-Type: application/x-www-form-urlencoded
+          body: event=%28%22order%22%20%2F%20%22invoice%22%29&url=%28callback%20url%29
+        expectedResponse:
+          x-allowExtraHeaders: true
+          x-bodyMatchMode: NONE
+          x-arrayOrderedMatching: false
+          x-arrayCheckCount: false
+          x-matchResponseSchema: true
+          statusCode: 200
+          headers: {}
+        x-testShouldPass: true
+        x-testEnabled: true
+        x-testName: Subscribe to events
+      x-server-name: Server 1
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  /webhook/unsubscribe/{SubscriptionID}:
+    get:
+      summary: Unsubscribe to Invoice / Order events
+      tags:
+      - Misc
+      operationId: UnsubscribetoEvents
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        default: Bearer {token}
+        type: string
+      - name: SubscriptionID
+        in: path
+        required: true
+        type: string
+        description: ''
+      responses:
+        200:
+          description: ''
+          headers: {}
+      x-unitTests: []
+      x-server-name: Server 1
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  /webhook/subscriptionList:
+    get:
+      summary: Subscriptions list
+      tags:
+      - Misc
+      operationId: Subscriptionslist
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        default: Bearer {token}
+        type: string
+      - name: page
+        in: query
+        required: true
+        type: string
+        x-example: page
+        description: ''
+      - name: pageSize
+        in: query
+        required: true
+        type: string
+        x-example: pagesize
+        description: ''
+      responses:
+        200:
+          description: ''
+          headers: {}
+      x-unitTests:
+      - request:
+          method: GET
+          uri: /webhook/subscriptionList?page=page&pageSize=pagesize
+        expectedResponse:
+          x-allowExtraHeaders: true
+          x-bodyMatchMode: NONE
+          x-arrayOrderedMatching: false
+          x-arrayCheckCount: false
+          x-matchResponseSchema: true
+          statusCode: 200
+          headers: {}
+        x-testShouldPass: true
+        x-testEnabled: true
+        x-testName: Subscriptions list
+      x-server-name: Server 1
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+tags:
+- name: Misc
+  description: ''
